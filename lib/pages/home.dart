@@ -10,16 +10,27 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
-  void initState() {
-    super.initState();
-    setData();
-  }
-
   bool isMale = true;
   int age = 22;
   double height = 160;
   double weight = 75;
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isMale = prefs.getBool('isMale') ?? true;
+      age = prefs.getInt('age') ?? 22;
+      height = prefs.getDouble('height') ?? 160;
+      weight = prefs.getDouble('weight') ?? 75;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    setData();
+  }
 
   setData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
