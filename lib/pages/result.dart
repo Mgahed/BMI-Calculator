@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Result extends StatefulWidget {
@@ -96,10 +97,7 @@ class _ResultState extends State<Result> {
                         context,
                         "Bmi result ${bmi.toStringAsFixed(2)}",
                       ),
-                      card(
-                        context,
-                        "Healthiness $resultPhrase",
-                      ),
+                      buildCircularPercentIndicator(context),
                       card(context, suggestionPhrase, myColor: true),
                     ],
                   ),
@@ -112,16 +110,48 @@ class _ResultState extends State<Result> {
     );
   }
 
+  CircularPercentIndicator buildCircularPercentIndicator(BuildContext context) {
+    return CircularPercentIndicator(
+      radius: 70.0,
+      lineWidth: 13.0,
+      animation: true,
+      animationDuration: 1200,
+      percent: 0.5,
+      center: Transform.rotate(
+        angle: bmi < 18.5 || bmi >= 25 ? (90 * pi / 180) * -1 : (90 * pi / 180),
+        child: Icon(
+          Icons.arrow_upward_sharp,
+          size: 50.0,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
+      footer: Text(
+        "Healthiness $resultPhrase",
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
+      ),
+      circularStrokeCap: CircularStrokeCap.butt,
+      progressColor: Colors.green[800],
+      backgroundColor: Colors.red.shade600,
+    );
+  }
+
   Card card(BuildContext context, String text, {bool myColor = false}) {
     return Card(
-      color: myColor ? Theme.of(context).colorScheme.errorContainer : null,
+      color: myColor
+          ? (bmi < 18.5 || bmi >= 25 ? Colors.red.shade600 : Colors.green[800])
+          : null,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: SizedBox(
           width: double.infinity,
           child: Text(
             text,
-            style: Theme.of(context).textTheme.headline5,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.headline6?.fontSize,
+              color: myColor
+                  ? Colors.white
+                  : Theme.of(context).textTheme.headline6?.color,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
